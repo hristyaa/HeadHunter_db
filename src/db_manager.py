@@ -60,6 +60,17 @@ class DBManager():
 
     def get_avg_salary(self):
         ''' Получение средней зарплаты по вакансиям '''
+        try:
+            self.cur.execute("""
+                SELECT sum(salary)/count(salary) FROM vacancies
+                WHERE salary IS NOT NULL;
+        """)
+            result = self.cur.fetchone()
+            return result[0] if result and result[0] is not None else 0
+
+        except Exception as e:
+            print(f"Ошибка при запросе: {e}")
+            return []
 
 
 
