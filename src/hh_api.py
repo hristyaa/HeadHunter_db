@@ -12,6 +12,7 @@ DB_PASSWORD = os.getenv("DB_PASSWORD")
 DB_HOST = os.getenv("DB_HOST")
 DB_PORT = os.getenv("DB_PORT")
 
+
 def get_company(file_employers="../data/company.json", area=106):
     """
     Получение данных о топ-10 компаниях с наибольшим количеством вакансий по умолчанию в Чите
@@ -38,7 +39,6 @@ def get_employers_id(employers):
     for employer in employers_items:
         employers_id.append(employer['id'])
     return employers_id
-
 
 
 def insert_employers_from_json(file_employers="../data/company.json"):
@@ -82,24 +82,33 @@ def insert_employers_from_json(file_employers="../data/company.json"):
 
 def get_vacancy(employers_id, file_vacancies="../data/vacancy.json"):
     """
-    Получение данных о топ-10 компаниях с наибольшим количеством вакансий в Чите
+    Получение данных о топ-10 компаниях с наибольшим количеством вакансий в выбранном регионе
     """
     vacancies = []
     for employer_id in employers_id:
+        page = 0
+        while True:
 
-        url_vacancies = f'https://api.hh.ru/vacancies?employer_id={employer_id}&per_page=100'
+            url_vacancies = f'https://api.hh.ru/vacancies/'
+            params = {
+                "employer_id": employer_id,
+                "per_page": 100,
+                "page": page
+            }
+            response = requests.get(url_vacancies, params=params)
+            if response.status_code != 200:
+                raise ValueError(f"Ошибка: {response.status_code}")
+            data = response.json()
+            data_vacancies = data.get('items', [])
+            vacancies.extend(data_vacancies)
 
-        response = requests.get(url_vacancies)
-        if response.status_code != 200:
-            raise ValueError(f"Ошибка: {response.status_code}")
-        data = response.json()
-        data_vacancies = data.get('items', [])
-        vacancies.extend(data_vacancies)
+            if page >= data.get("pages", 0) - 1:
+                break
+            page += 1
 
     with open(file_vacancies, "w", encoding="utf-8") as f:
         json.dump(vacancies, f, ensure_ascii=False, indent=4)
 
-# print(get_company())
 
 def insert_vacancies_from_json(file_vacancies="../data/vacancy.json"):
     ''' Вставка данных по API-запросу о вакансиях в таблицу vacancies'''
@@ -148,6 +157,8 @@ def insert_vacancies_from_json(file_vacancies="../data/vacancy.json"):
     conn.commit()
     cur.close()
     conn.close()
+
+
 
 # employers_id = get_employers_id(get_company())
 # print(employers_id)
