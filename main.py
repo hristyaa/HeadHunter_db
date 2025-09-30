@@ -31,9 +31,16 @@ if __name__ == "__main__":
 
     insert_vacancies_from_json()
 
+    # db = DBManager(DB_NAME,DB_USER,DB_PASSWORD,DB_HOST,DB_PORT)
+    # db.connect()
+    # employers_db = db.get_companies_and_vacancies_count()
+    # for emloyer_name, count_vacancies in employers_db:
+    #     print(f'{emloyer_name} - количество вакансий: {count_vacancies}')
+    # db.close()
+
     db = DBManager(DB_NAME,DB_USER,DB_PASSWORD,DB_HOST,DB_PORT)
     db.connect()
-    employers_db = db.get_companies_and_vacancies_count()
-    for emloyer_name, count_vacancies in employers_db:
-        print(f'{emloyer_name} - количество вакансий: {count_vacancies}')
+    all_vacancies_db = db.get_all_vacancies()
+    for employer_name, name, salary, url in all_vacancies_db:
+        print(f"{employer_name} | {name} | {salary} | {url}")
     db.close()

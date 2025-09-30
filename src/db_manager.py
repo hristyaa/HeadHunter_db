@@ -1,7 +1,9 @@
 import psycopg2
 
+
 class DBManager():
     """ Класс для работы с БД (таблицами employers и vacancies)"""
+
     def __init__(self, db_name, user, password, host, port):
         """Инициализация класса"""
         self.__db_name = db_name
@@ -9,7 +11,6 @@ class DBManager():
         self.__password = password
         self.__host = host
         self.__port = port
-
 
     def connect(self):
         """Установка соединения с БД"""
@@ -38,6 +39,28 @@ class DBManager():
             print(f"Ошибка при запросе: {e}")
             return []
 
+    def get_all_vacancies(self):
+        '''
+        Получение списка всех вакансий с указанием названия компании,
+        названия вакансии и зарплаты и ссылки на вакансию
+        '''
+        try:
+            self.cur.execute("""
+                SELECT employer_name, name, salary, url
+                FROM vacancies
+                GROUP BY employer_name, name, salary, url
+                ORDER BY employer_name;
+""")
+
+            return self.cur.fetchall()
+
+        except Exception as e:
+            print(f"Ошибка при запросе: {e}")
+            return []
+
+    def get_avg_salary(self):
+        ''' Получение средней зарплаты по вакансиям '''
+
 
 
     def close(self):
@@ -46,13 +69,3 @@ class DBManager():
             self.cur.close()
         if self.conn:
             self.conn.close()
-
-
-
-
-
-
-
-
-
-
