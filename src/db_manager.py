@@ -72,7 +72,18 @@ class DBManager():
             print(f"Ошибка при запросе: {e}")
             return []
 
+    def get_vacancies_with_higher_salary(self, avg_salary_db):
+        ''' Получает список всех вакансий, у которых зарплата выше средней по всем вакансиям'''
+        try:
+            self.cur.execute(f"""
+                SELECT employer_name, name, salary, url FROM vacancies
+                WHERE salary > {avg_salary_db};
+        """)
+            return self.cur.fetchall()
 
+        except Exception as e:
+            print(f"Ошибка при запросе: {e}")
+            return []
 
     def close(self):
         """Закрывает соединение"""

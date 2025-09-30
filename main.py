@@ -45,8 +45,17 @@ if __name__ == "__main__":
     #     print(f"{employer_name} | {name} | {salary} | {url}")
     # db.close()
 
+    # db = DBManager(DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT)
+    # db.connect()
+    # avg_salary_db = db.get_avg_salary()
+    # print(f"Средняя зарплата по вакансиям: {round(avg_salary_db, 2)} руб.")
+    # db.close()
+
     db = DBManager(DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT)
     db.connect()
     avg_salary_db = db.get_avg_salary()
-    print(f"Средняя зарплата по вакансиям: {round(avg_salary_db, 2)} руб.")
+    vacancies_avg_salary = db.get_vacancies_with_higher_salary(avg_salary_db)
+    for employer_name, name, salary, url in vacancies_avg_salary:
+        print(f"{employer_name} | {name} | {salary} | {url}")
     db.close()
+
