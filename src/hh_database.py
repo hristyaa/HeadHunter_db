@@ -81,6 +81,24 @@ def create_tables():
     cur.close()
     conn.close()
 
+def clear_table(table_name):
+    """ Очистка таблицы"""
+    conn = psycopg2.connect(
+        dbname=DB_NAME,
+        user=DB_USER,
+        password=DB_PASSWORD,
+        host=DB_HOST,
+        port=DB_PORT
+    )
+
+    cur = conn.cursor()
+
+    cur.execute(f"TRUNCATE TABLE {table_name} CASCADE;")
+
+    conn.commit()
+    cur.close()
+    conn.close()
+
     # with open(file_name, 'r', encoding='utf-8') as file:
     #     json_reader = json.loads(file)
     #     header = next(json_reader)
