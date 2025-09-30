@@ -93,7 +93,7 @@ class DBManager():
         try:
             query = f"""
                 SELECT employer_name, name, salary, url FROM vacancies
-                WHERE name LIKE  %s ;
+                WHERE lower(name) LIKE  lower(%s) ;
         """
             param = (f"%{keyword}%",)
             self.cur.execute(query, param)

@@ -1,7 +1,6 @@
 import psycopg2
 import os
 from dotenv import load_dotenv
-import json
 
 load_dotenv()
 
@@ -31,11 +30,7 @@ def create_database():
         exists = cur.fetchone()
 
         if not exists:
-
             cur.execute(f"CREATE DATABASE {DB_NAME};")
-            print(f"База данных '{DB_NAME}' успешно создана.")
-        else:
-            print(f"База данных '{DB_NAME}' уже существует.")
 
     finally:
         cur.close()
