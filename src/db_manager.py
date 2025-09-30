@@ -30,8 +30,9 @@ class DBManager():
         """ Метод получения списка всех компаний и количества вакансий у каждой компании"""
         try:
             self.cur.execute("""
-                SELECT vacancies.employer_name, count(*) FROM vacancies
-                GROUP BY vacancies.employer_name
+                SELECT employer_name, count(*) FROM employers
+                LEFT JOIN vacancies ON employers.id = vacancies.employer_id
+                GROUP BY employer_name
                 ORDER BY count (*) DESC;""")
             return self.cur.fetchall()
 
@@ -46,9 +47,9 @@ class DBManager():
         '''
         try:
             self.cur.execute("""
-                SELECT employer_name, name, salary, url
+                SELECT vacancies.employer_name, vacancies.name, vacancies.salary, vacancies.url
                 FROM vacancies
-                GROUP BY employer_name, name, salary, url
+                LEFT JOIN employers ON employers.id = vacancies.employer_id
                 ORDER BY employer_name;
 """)
 

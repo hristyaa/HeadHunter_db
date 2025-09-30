@@ -22,6 +22,8 @@ if __name__ == "__main__":
     clear_table('vacancies')
     clear_table('employers')
 
+    # user_area = f''
+
     employers = get_company()
     insert_employers_from_json()
 
@@ -38,12 +40,12 @@ if __name__ == "__main__":
     #     print(f'{emloyer_name} - количество вакансий: {count_vacancies}')
     # db.close()
 
-    # db = DBManager(DB_NAME,DB_USER,DB_PASSWORD,DB_HOST,DB_PORT)
-    # db.connect()
-    # all_vacancies_db = db.get_all_vacancies()
-    # for employer_name, name, salary, url in all_vacancies_db:
-    #     print(f"{employer_name} | {name} | {salary} | {url}")
-    # db.close()
+    db = DBManager(DB_NAME,DB_USER,DB_PASSWORD,DB_HOST,DB_PORT)
+    db.connect()
+    all_vacancies_db = db.get_all_vacancies()
+    for employer_name, name, salary, url in all_vacancies_db:
+        print(f"{employer_name} | {name} | {salary} | {url}")
+    db.close()
 
     # db = DBManager(DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT)
     # db.connect()
@@ -58,13 +60,13 @@ if __name__ == "__main__":
     #     print(f"{employer_name} | {name} | {salary} | {url}")
     # db.close()
 
-    db = DBManager(DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT)
-    db.connect()
-    keywords = 'лаборант, материал, сварщик'
-    keywords_list = [word.strip() for word in keywords.split(",")]
-    for word in keywords_list:
-        vacancies_keyword = db.get_vacancies_with_keyword(word)
-        for employer_name, name, salary, url in vacancies_keyword:
-            print(f"{employer_name} | {name} | {salary} | {url}")
-    db.close()
+    # db = DBManager(DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT)
+    # db.connect()
+    # keywords = 'лаборант, материал, сварщик'
+    # keywords_list = [word.strip() for word in keywords.split(",")]
+    # for word in keywords_list:
+    #     vacancies_keyword = db.get_vacancies_with_keyword(word)
+    #     for employer_name, name, salary, url in vacancies_keyword:
+    #         print(f"{employer_name} | {name} | {salary} | {url}")
+    # db.close()
 
