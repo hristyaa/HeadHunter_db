@@ -1,5 +1,6 @@
-import psycopg2
 import os
+
+import psycopg2
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -14,13 +15,7 @@ DB_PORT = os.getenv("DB_PORT")
 def create_database():
     """Создание базы данных"""
     try:
-        conn = psycopg2.connect(
-                dbname="postgres",
-                user=DB_USER,
-                password=DB_PASSWORD,
-                host=DB_HOST,
-                port=DB_PORT
-        )
+        conn = psycopg2.connect(dbname="postgres", user=DB_USER, password=DB_PASSWORD, host=DB_HOST, port=DB_PORT)
 
         conn.autocommit = True
 
@@ -36,19 +31,15 @@ def create_database():
         cur.close()
         conn.close()
 
+
 def create_tables():
-    """ Создание SQL-таблиц"""
-    conn = psycopg2.connect(
-        dbname=DB_NAME,
-        user=DB_USER,
-        password=DB_PASSWORD,
-        host=DB_HOST,
-        port=DB_PORT
-    )
+    """Создание SQL-таблиц"""
+    conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASSWORD, host=DB_HOST, port=DB_PORT)
 
     cur = conn.cursor()
 
-    cur.execute("""
+    cur.execute(
+        """
         CREATE TABLE IF NOT EXISTS employers (
             id BIGINT PRIMARY KEY,
             name VARCHAR NOT NULL,
@@ -57,9 +48,11 @@ def create_tables():
             vacancies_url TEXT,
             open_vacancies INT
                     )
-        """)
+        """
+    )
 
-    cur.execute("""
+    cur.execute(
+        """
        CREATE TABLE IF NOT EXISTS vacancies (
            id BIGINT PRIMARY KEY,
            name VARCHAR NOT NULL,
@@ -68,23 +61,19 @@ def create_tables():
            area TEXT,
            type TEXT,
            employer_id BIGINT REFERENCES employers(id) ON DELETE CASCADE,
-           employer_name VARCHAR 
+           employer_name VARCHAR
        )
-       """)
+       """
+    )
 
     conn.commit()
     cur.close()
     conn.close()
 
+
 def clear_table(table_name):
-    """ Очистка таблицы"""
-    conn = psycopg2.connect(
-        dbname=DB_NAME,
-        user=DB_USER,
-        password=DB_PASSWORD,
-        host=DB_HOST,
-        port=DB_PORT
-    )
+    """Очистка таблицы"""
+    conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASSWORD, host=DB_HOST, port=DB_PORT)
 
     cur = conn.cursor()
 
@@ -93,20 +82,3 @@ def clear_table(table_name):
     conn.commit()
     cur.close()
     conn.close()
-
-    # with open(file_name, 'r', encoding='utf-8') as file:
-    #     json_reader = json.loads(file)
-    #     header = next(json_reader)
-    #     for row in json_reader:
-    #         query = f'INSERT INTO {table_name} ({', '.join(header)}) VALUES ({', '.join(["%s"] * len(row))})'
-    #         cur.execute(query, row)
-
-#
-# create_database()
-# create_tables()
-
-
-
-
-
-
