@@ -16,7 +16,7 @@ DB_PORT = os.getenv("DB_PORT")
 
 def get_company(file_employers="../data/company.json", area=106):
     """
-    Получение данных о топ-10 компаниях с наибольшим количеством вакансий по умолчанию в Чите
+    Получение данных о топ-10 компаниях с наибольшим количеством вакансий (по умолчанию в Чите)
     и сохранение данных в JSON-файл
     """
     url_employers = "https://api.hh.ru/employers/"
@@ -87,7 +87,7 @@ def insert_employers_from_json(file_employers="../data/company.json"):
 
 def get_vacancy(employers_id, file_vacancies="../data/vacancy.json"):
     """
-    Получение данных о топ-10 компаниях с наибольшим количеством вакансий в выбранном регионе
+    Получение данных о вакансиях топ-10 работодателей
     """
     vacancies = []
     for employer_id in employers_id:
