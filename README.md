@@ -23,7 +23,8 @@ poetry add pytest
 ```
 pip install -r requirements.txt
 pip install python-dotenv 
-pip install types-psycopg2  
+pip install types-psycopg2
+pip install types-requests  
 ```
 
 ## Запуск:

@@ -1,5 +1,6 @@
 import json
 import os
+from typing import Any
 
 import psycopg2
 import requests
@@ -7,7 +8,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-DB_NAME = os.getenv("DB_NAME")
+DB_NAME = os.getenvis("DB_NAME")
 DB_USER = os.getenv("DB_USER")
 DB_PASSWORD = os.getenv("DB_PASSWORD")
 DB_HOST = os.getenv("DB_HOST")
@@ -21,33 +22,31 @@ file_employers = os.path.join(directory, "company.json")
 file_vacancies = os.path.join(directory, "vacancy.json")
 
 
-def get_company(file_employers=file_employers, area=106):
+def get_company(file_employers: str = file_employers, area: int = 106) -> dict[str, Any]:
     """
     Получение данных о топ-10 компаниях с наибольшим количеством вакансий (по умолчанию в Чите)
     и сохранение данных в JSON-файл
     """
     url_employers = "https://api.hh.ru/employers/"
-    params = {
-        "per_page": 10,
+    params: dict[str, str] = {
+        "per_page": "10",
         "sort_by": "by_vacancies_open",
-        "only_with_vacancies": True,
+        "only_with_vacancies": "True",
         "locale": "RU",
-        "area": area,
+        "area": str(area),
     }
     response = requests.get(url_employers, params=params)
     if response.status_code != 200:
         raise ValueError(f"Ошибка: {response.status_code}")
-    employers = response.json()
+    employers_json: Any = response.json()
+    employers: dict[str, Any] = dict(employers_json)
+
     with open(file_employers, "w", encoding="utf-8") as f:
         json.dump(employers, f, ensure_ascii=False, indent=4)
-    employers_items = employers["items"]
-    employers_id = []
-    for employer in employers_items:
-        employers_id.append(employer["id"])
     return employers
 
 
-def get_employers_id(employers):
+def get_employers_id(employers: dict) -> list:
     """Получение списка employers_id"""
     employers_items = employers["items"]
     employers_id = []
@@ -56,7 +55,7 @@ def get_employers_id(employers):
     return employers_id
 
 
-def insert_employers_from_json(file_employers=file_employers):
+def insert_employers_from_json(file_employers: str = file_employers) -> None:
     """Вставка данных по API-запросу о работодателях в таблицу employers"""
 
     with open(file_employers, "r", encoding="utf-8") as f:
@@ -92,7 +91,7 @@ def insert_employers_from_json(file_employers=file_employers):
     conn.close()
 
 
-def get_vacancy(employers_id, file_vacancies=file_vacancies):
+def get_vacancy(employers_id: list, file_vacancies: str = file_vacancies) -> None:
     """
     Получение данных о вакансиях топ-10 работодателей
     """
@@ -118,7 +117,7 @@ def get_vacancy(employers_id, file_vacancies=file_vacancies):
         json.dump(vacancies, f, ensure_ascii=False, indent=4)
 
 
-def insert_vacancies_from_json(file_vacancies=file_vacancies):
+def insert_vacancies_from_json(file_vacancies: str = file_vacancies) -> None:
     """Вставка данных по API-запросу о вакансиях в таблицу vacancies"""
 
     with open(file_vacancies, "r", encoding="utf-8") as f:
