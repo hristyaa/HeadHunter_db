@@ -13,8 +13,15 @@ DB_PASSWORD = os.getenv("DB_PASSWORD")
 DB_HOST = os.getenv("DB_HOST")
 DB_PORT = os.getenv("DB_PORT")
 
+base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+directory = os.path.join(base_dir, "data")
+os.makedirs(directory, exist_ok=True)
 
-def get_company(file_employers="../data/company.json", area=106):
+file_employers = os.path.join(directory, "company.json")
+file_vacancies = os.path.join(directory, "vacancy.json")
+
+
+def get_company(file_employers=file_employers, area=106):
     """
     Получение данных о топ-10 компаниях с наибольшим количеством вакансий (по умолчанию в Чите)
     и сохранение данных в JSON-файл
@@ -49,7 +56,7 @@ def get_employers_id(employers):
     return employers_id
 
 
-def insert_employers_from_json(file_employers="../data/company.json"):
+def insert_employers_from_json(file_employers=file_employers):
     """Вставка данных по API-запросу о работодателях в таблицу employers"""
 
     with open(file_employers, "r", encoding="utf-8") as f:
@@ -85,7 +92,7 @@ def insert_employers_from_json(file_employers="../data/company.json"):
     conn.close()
 
 
-def get_vacancy(employers_id, file_vacancies="../data/vacancy.json"):
+def get_vacancy(employers_id, file_vacancies=file_vacancies):
     """
     Получение данных о вакансиях топ-10 работодателей
     """
@@ -111,7 +118,7 @@ def get_vacancy(employers_id, file_vacancies="../data/vacancy.json"):
         json.dump(vacancies, f, ensure_ascii=False, indent=4)
 
 
-def insert_vacancies_from_json(file_vacancies="../data/vacancy.json"):
+def insert_vacancies_from_json(file_vacancies=file_vacancies):
     """Вставка данных по API-запросу о вакансиях в таблицу vacancies"""
 
     with open(file_vacancies, "r", encoding="utf-8") as f:
