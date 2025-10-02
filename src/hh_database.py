@@ -1,7 +1,7 @@
-import psycopg2
 import os
+
+import psycopg2
 from dotenv import load_dotenv
-import json
 
 load_dotenv()
 
@@ -12,16 +12,10 @@ DB_HOST = os.getenv("DB_HOST")
 DB_PORT = os.getenv("DB_PORT")
 
 
-def create_database():
+def create_database() -> None:
     """Создание базы данных"""
     try:
-        conn = psycopg2.connect(
-                dbname="postgres",
-                user=DB_USER,
-                password=DB_PASSWORD,
-                host=DB_HOST,
-                port=DB_PORT
-        )
+        conn = psycopg2.connect(dbname="postgres", user=DB_USER, password=DB_PASSWORD, host=DB_HOST, port=DB_PORT)
 
         conn.autocommit = True
 
@@ -31,29 +25,21 @@ def create_database():
         exists = cur.fetchone()
 
         if not exists:
-
             cur.execute(f"CREATE DATABASE {DB_NAME};")
-            print(f"База данных '{DB_NAME}' успешно создана.")
-        else:
-            print(f"База данных '{DB_NAME}' уже существует.")
 
     finally:
         cur.close()
         conn.close()
 
-def create_tables():
-    """ Создание SQL-таблиц"""
-    conn = psycopg2.connect(
-        dbname=DB_NAME,
-        user=DB_USER,
-        password=DB_PASSWORD,
-        host=DB_HOST,
-        port=DB_PORT
-    )
+
+def create_tables() -> None:
+    """Создание SQL-таблиц"""
+    conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASSWORD, host=DB_HOST, port=DB_PORT)
 
     cur = conn.cursor()
 
-    cur.execute("""
+    cur.execute(
+        """
         CREATE TABLE IF NOT EXISTS employers (
             id BIGINT PRIMARY KEY,
             name VARCHAR NOT NULL,
@@ -62,9 +48,11 @@ def create_tables():
             vacancies_url TEXT,
             open_vacancies INT
                     )
-        """)
+        """
+    )
 
-    cur.execute("""
+    cur.execute(
+        """
        CREATE TABLE IF NOT EXISTS vacancies (
            id BIGINT PRIMARY KEY,
            name VARCHAR NOT NULL,
@@ -73,27 +61,24 @@ def create_tables():
            area TEXT,
            type TEXT,
            employer_id BIGINT REFERENCES employers(id) ON DELETE CASCADE,
-           employer_name VARCHAR 
+           employer_name VARCHAR
        )
-       """)
+       """
+    )
 
     conn.commit()
     cur.close()
     conn.close()
 
-    # with open(file_name, 'r', encoding='utf-8') as file:
-    #     json_reader = json.loads(file)
-    #     header = next(json_reader)
-    #     for row in json_reader:
-    #         query = f'INSERT INTO {table_name} ({', '.join(header)}) VALUES ({', '.join(["%s"] * len(row))})'
-    #         cur.execute(query, row)
 
-#
-# create_database()
-# create_tables()
+def clear_table(table_name: str) -> None:
+    """Очистка таблицы"""
+    conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASSWORD, host=DB_HOST, port=DB_PORT)
 
+    cur = conn.cursor()
 
+    cur.execute(f"TRUNCATE TABLE {table_name} CASCADE;")
 
-
-
-
+    conn.commit()
+    cur.close()
+    conn.close()
