@@ -12,7 +12,7 @@ DB_HOST = os.getenv("DB_HOST")
 DB_PORT = os.getenv("DB_PORT")
 
 
-def create_database():
+def create_database() -> None:
     """Создание базы данных"""
     try:
         conn = psycopg2.connect(dbname="postgres", user=DB_USER, password=DB_PASSWORD, host=DB_HOST, port=DB_PORT)
@@ -32,7 +32,7 @@ def create_database():
         conn.close()
 
 
-def create_tables():
+def create_tables() -> None:
     """Создание SQL-таблиц"""
     conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASSWORD, host=DB_HOST, port=DB_PORT)
 
@@ -71,7 +71,7 @@ def create_tables():
     conn.close()
 
 
-def clear_table(table_name):
+def clear_table(table_name: str) -> None:
     """Очистка таблицы"""
     conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASSWORD, host=DB_HOST, port=DB_PORT)
 
