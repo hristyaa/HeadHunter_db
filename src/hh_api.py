@@ -91,7 +91,7 @@ def insert_employers_from_json(file_employers: str = file_employers) -> None:
     conn.close()
 
 
-def get_vacancy(employers_id: list, file_vacancies: str = file_vacancies) -> None:
+def get_vacancy(employers_id: list, file_vacancies: str = file_vacancies) -> list:
     """
     Получение данных о вакансиях топ-10 работодателей
     """
@@ -115,6 +115,7 @@ def get_vacancy(employers_id: list, file_vacancies: str = file_vacancies) -> Non
 
     with open(file_vacancies, "w", encoding="utf-8") as f:
         json.dump(vacancies, f, ensure_ascii=False, indent=4)
+    return vacancies
 
 
 def insert_vacancies_from_json(file_vacancies: str = file_vacancies) -> None:

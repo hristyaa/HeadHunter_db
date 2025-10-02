@@ -1,10 +1,17 @@
-from src.hh_database import create_database, create_tables, clear_table
-from src.hh_api import get_company, insert_employers_from_json, insert_vacancies_from_json, get_employers_id, \
-    get_vacancy
-from src.db_manager import DBManager
-import re
 import os
+import re
+
 from dotenv import load_dotenv
+
+from src.db_manager import DBManager
+from src.hh_api import (
+    get_company,
+    get_employers_id,
+    get_vacancy,
+    insert_employers_from_json,
+    insert_vacancies_from_json,
+)
+from src.hh_database import clear_table, create_database, create_tables
 
 load_dotenv()
 
@@ -17,17 +24,21 @@ DB_PORT = os.getenv("DB_PORT")
 if __name__ == "__main__":
     create_database()
     create_tables()
-    clear_table('vacancies')
-    clear_table('employers')
+    clear_table("vacancies")
+    clear_table("employers")
     while True:
-        user_area = int(input(f"""Привет! 
+        user_area = int(
+            input(
+                """Привет!
 Для получения данных о работодателях и их вакансиях с сайта hh.ru набери цифру региона из представленных:
     1 - Чита
     2 - Иркутск
     3 - Улан-Удэ
     4 - Владивосток
     5 - Новосибирск
-Вы выбираете регион: """))
+Вы выбираете регион: """
+            )
+        )
         try:
             if user_area in [1, 2, 3, 4, 5]:
                 if user_area == 1:
@@ -59,14 +70,18 @@ if __name__ == "__main__":
 
     insert_vacancies_from_json()
 
-    print("""\nОтлично! Регион выбран!
+    print(
+        """\nОтлично! Регион выбран!
 Получены топ-10 работодателей в регионе по количеству открытых вакансий.
-Загружены вакансии полученных работодателей.\n""")
+Загружены вакансии полученных работодателей.\n"""
+    )
     while True:
-        user_input = int(input("""Для получения:
-- списка всех компаний и количества вакансий у каждой компании 
+        user_input = int(
+            input(
+                """Для получения:
+- списка всех компаний и количества вакансий у каждой компании
 введите 1;
-- списка всех вакансий с указанием названия компании, названия вакансии, зарплаты и ссылки на вакансию 
+- списка всех вакансий с указанием названия компании, названия вакансии, зарплаты и ссылки на вакансию
 введите 2;
 - средней зарплаты по вакансиям
 введите 3;
@@ -75,8 +90,10 @@ if __name__ == "__main__":
 - списка всех вакансий, в названии которых содержатся переданные слова
 введите 5.
 Для завершения работы введите 0.
-Введите выбранный пункт меню: """))
-        print('')
+Введите выбранный пункт меню: """
+            )
+        )
+        print("")
         try:
             if user_input in [1, 2, 3, 4, 5]:
                 db = DBManager(DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT)
@@ -85,13 +102,13 @@ if __name__ == "__main__":
                 if user_input == 1:
                     employers_db = db.get_companies_and_vacancies_count()
                     for emloyer_name, count_vacancies in employers_db:
-                        print(f'{emloyer_name} - количество вакансий: {count_vacancies}')
-                    print('')
+                        print(f"{emloyer_name} - количество вакансий: {count_vacancies}")
+                    print("")
                 elif user_input == 2:
                     all_vacancies_db = db.get_all_vacancies()
                     for employer_name, name, salary, url in all_vacancies_db:
                         print(f"{employer_name} | {name} | {salary} | {url}")
-                    print('')
+                    print("")
                 elif user_input == 3:
                     avg_salary_db = db.get_avg_salary()
                     print(f"\nСредняя зарплата по вакансиям: {round(avg_salary_db, 2)} руб.\n")
@@ -100,11 +117,13 @@ if __name__ == "__main__":
                     vacancies_avg_salary = db.get_vacancies_with_higher_salary()
                     for employer_name, name, salary, url in vacancies_avg_salary:
                         print(f"{employer_name} | {name} | {salary} | {url}")
-                    print('')
+                    print("")
                 elif user_input == 5:
-                    keywords = input("""Введите слова для поиска вакансий через запятую, например:
-'лаборант, материал, сварщик'\n""")
-                    keywords_list = [word.strip() for word in re.split(r'[,\s]+', keywords)]
+                    keywords = input(
+                        """Введите слова для поиска вакансий через запятую, например:
+'лаборант, материал, сварщик'\n"""
+                    )
+                    keywords_list = [word.strip() for word in re.split(r"[,\s]+", keywords)]
                     for word in keywords_list:
                         vacancies_keyword = db.get_vacancies_with_keyword(word)
                         if vacancies_keyword:
@@ -112,7 +131,7 @@ if __name__ == "__main__":
                                 print(f"{employer_name} | {name} | {salary} | {url}")
                         else:
                             print(f"Вакансии, содержащие слово '{word}', не найдены")
-                    print('')
+                    print("")
                 db.close()
             elif user_input == 0:
                 print("Программа завершена. До скорой встречи!")

@@ -1,6 +1,7 @@
-import psycopg2
-from typing import Union
 from abc import ABC, abstractmethod
+from typing import Union
+
+import psycopg2
 
 
 class DBManagerABC(ABC):
@@ -32,16 +33,23 @@ class DBManagerABC(ABC):
             self.conn.close()
 
     @abstractmethod
-    def get_companies_and_vacancies_count(self) -> list:
-        pass
-
-    @abstractmethod
-    def get_all_vacancies(self) -> list:
+    def get_all_from_table(self, table_name: str) -> list:
+        """ Абстрактный метод для получения всех данных из указанной таблицы"""
         pass
 
 
-class DBManager(DBManager_abc):
+class DBManager(DBManagerABC):
     """Класс для работы с БД (таблицами employers и vacancies)"""
+
+    def get_all_from_table(self, table_name: str) -> list:
+        """ Абстрактный метод для получения всех данных из таблицы"""
+        try:
+            self.cur.execute(f"SELECT * FROM {table_name};")
+            return self.cur.fetchall()
+
+        except Exception as e:
+            print(f"Ошибка при запросе: {e}")
+            return []
 
     def get_companies_and_vacancies_count(self) -> list:
         """Метод получения списка всех компаний и количества вакансий у каждой компании"""
