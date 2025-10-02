@@ -1,8 +1,10 @@
 import psycopg2
 from typing import Union
+from abc import ABC, abstractmethod
 
-class DBManager:
-    """Класс для работы с БД (таблицами employers и vacancies)"""
+
+class DBManagerABC(ABC):
+    """Абстрактный класс для работы с БД"""
 
     def __init__(self, db_name: str, user: str, password: str, host: str, port: str) -> None:
         """Инициализация класса"""
@@ -21,6 +23,25 @@ class DBManager:
             self.cur = self.conn.cursor()
         except psycopg2.OperationalError as e:
             print(f"Ошибка подключения: {e}")
+
+    def close(self) -> None:
+        """Закрывает соединение"""
+        if self.cur:
+            self.cur.close()
+        if self.conn:
+            self.conn.close()
+
+    @abstractmethod
+    def get_companies_and_vacancies_count(self) -> list:
+        pass
+
+    @abstractmethod
+    def get_all_vacancies(self) -> list:
+        pass
+
+
+class DBManager(DBManager_abc):
+    """Класс для работы с БД (таблицами employers и vacancies)"""
 
     def get_companies_and_vacancies_count(self) -> list:
         """Метод получения списка всех компаний и количества вакансий у каждой компании"""
@@ -106,10 +127,3 @@ class DBManager:
         except Exception as e:
             print(f"Ошибка при запросе: {e}")
             return []
-
-    def close(self) -> None:
-        """Закрывает соединение"""
-        if self.cur:
-            self.cur.close()
-        if self.conn:
-            self.conn.close()
