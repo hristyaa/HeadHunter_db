@@ -1,10 +1,10 @@
 import psycopg2
-
+from typing import Union
 
 class DBManager:
     """Класс для работы с БД (таблицами employers и vacancies)"""
 
-    def __init__(self, db_name, user, password, host, port):
+    def __init__(self, db_name: str, user: str, password: str, host: str, port: str) -> None:
         """Инициализация класса"""
         self.__db_name = db_name
         self.__user = user
@@ -12,7 +12,7 @@ class DBManager:
         self.__host = host
         self.__port = port
 
-    def connect(self):
+    def connect(self) -> None:
         """Установка соединения с БД"""
         try:
             self.conn = psycopg2.connect(
@@ -22,7 +22,7 @@ class DBManager:
         except psycopg2.OperationalError as e:
             print(f"Ошибка подключения: {e}")
 
-    def get_companies_and_vacancies_count(self):
+    def get_companies_and_vacancies_count(self) -> list:
         """Метод получения списка всех компаний и количества вакансий у каждой компании"""
         try:
             self.cur.execute(
@@ -38,7 +38,7 @@ class DBManager:
             print(f"Ошибка при запросе: {e}")
             return []
 
-    def get_all_vacancies(self):
+    def get_all_vacancies(self) -> list:
         """
         Получение списка всех вакансий с указанием названия компании,
         названия вакансии и зарплаты и ссылки на вакансию
@@ -59,7 +59,7 @@ class DBManager:
             print(f"Ошибка при запросе: {e}")
             return []
 
-    def get_avg_salary(self):
+    def get_avg_salary(self) -> Union[float, int]:
         """Получение средней зарплаты по вакансиям"""
         try:
             self.cur.execute(
@@ -73,9 +73,9 @@ class DBManager:
 
         except Exception as e:
             print(f"Ошибка при запросе: {e}")
-            return []
+            return 0
 
-    def get_vacancies_with_higher_salary(self):
+    def get_vacancies_with_higher_salary(self) -> list:
         """Получает список всех вакансий, у которых зарплата выше средней по всем вакансиям"""
         try:
             self.cur.execute(
@@ -90,7 +90,7 @@ class DBManager:
             print(f"Ошибка при запросе: {e}")
             return []
 
-    def get_vacancies_with_keyword(self, keyword):
+    def get_vacancies_with_keyword(self, keyword: str) -> list:
         """Получает список всех вакансий, в названии которых содержатся переданные в метод слова"""
         if not keyword:
             return []
@@ -107,7 +107,7 @@ class DBManager:
             print(f"Ошибка при запросе: {e}")
             return []
 
-    def close(self):
+    def close(self) -> None:
         """Закрывает соединение"""
         if self.cur:
             self.cur.close()
